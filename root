@@ -1,0 +1,24 @@
+#!/bin/bash
+
+echo -n "Masukkan kata sandi root baru: "
+IFS= read -r -s root_password
+
+echo -e "\nMembuka akses root..."
+
+# Ubah kata sandi root
+echo "root:$root_password" | chpasswd
+
+# Buat file sshd_config yang baru
+cat <<EOL > /etc/ssh/sshd_config
+# Konfigurasi SSH
+PermitRootLogin yes
+PasswordAuthentication yes
+PermitEmptyPasswords no
+ChallengeResponseAuthentication no
+UsePAM yes
+EOL
+
+# Restart layanan SSH
+service ssh restart
+
+echo "Akses root berhasil dibuka!"
